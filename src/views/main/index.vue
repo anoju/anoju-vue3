@@ -7,6 +7,9 @@ import { ref, inject } from 'vue';
 //import { ref, getCurrentInstance } from 'vue';
 //const { $anime } = getCurrentInstance().appContext.config.globalProperties;
 const $anime = inject('$anime');
+const $metaTitle = inject('$metaTitle');
+$metaTitle('샘플 페이지');
+
 const logoImg = ref(null);
 const logoMoving = ref(false);
 function imgMove() {
