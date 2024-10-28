@@ -1,6 +1,78 @@
 <template>
-  <img ref="logoImg" alt="Vue logo" src="@/assets/images/logo.png" @click="imgMove()" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div class="page">
+    <img ref="logoImg" alt="Vue logo" src="@/assets/images/logo.png" @click="imgMove()" />
+    <div class="scroll-box">
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <ui-tooltip>툴팁입니다.</ui-tooltip><br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+      툴팁 테스트용 박스 <br />
+    </div>
+    <div class="table" style="margin: 60vh 0">
+      <table>
+        <tbody>
+          <tr>
+            <th scope="row">
+              th
+              <ui-tooltip>툴팁입니다.</ui-tooltip>
+            </th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">
+              th
+              <ui-tooltip>툴팁입니다.</ui-tooltip>
+            </th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+          <tr>
+            <th scope="row">th</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 <script setup>
 import { ref, inject } from 'vue';
@@ -52,3 +124,10 @@ export default {
   methods: {}
 };
 </script>
+<style>
+.scroll-box {
+  height: 100px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+</style>
