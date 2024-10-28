@@ -46,12 +46,13 @@ const handleClickOutside = (event) => {
 const getOffset = (el) => {
   const rect = el.getBoundingClientRect();
   return {
-    left: rect.left + window.scrollX,
-    top: rect.top + window.scrollY
+    left: rect.left,
+    top: rect.top
   };
 };
 
 const setStyle = () => {
+  if (!isShow.value) return;
   const $wrap = wrapper.value;
   const $content = content.value;
   if ($wrap && $content) {
@@ -60,19 +61,48 @@ const setStyle = () => {
       const $head = $wrap.querySelector('.tooltip-head');
       if ($head && $head.firstElementChild) tooltipBtn = $head.firstElementChild;
     }
-    const $left = getOffset(tooltipBtn).left;
-    contentWidth.value = document.body.clientWidth;
-    contentLeft.value = $left * -1;
-    arrLeft.value = $left + tooltipBtn.offsetWidth / 2;
+    const $btnWidth = tooltipBtn.offsetWidth;
+    const $contentWidth = $content.offsetWidth;
+    let $left = getOffset(tooltipBtn).left + $btnWidth / 2 - $contentWidth / 2;
+    let $arrLeft = $contentWidth / 2;
+    const $leftMargin = 20;
+    if ($left < $leftMargin) {
+      $arrLeft = $arrLeft - ($leftMargin - $left);
+      $left = $leftMargin;
+    }
+    const $btnHeight = tooltipBtn.offsetHeight;
+    const $top = getOffset(tooltipBtn).top + $btnHeight;
+    // contentWidth.value = document.body.clientWidth;
+    contentLeft.value = $left;
+    contentTop.value = $top;
+    arrLeft.value = $arrLeft;
   }
 };
 
-const contentWidth = ref(0);
+const findScrllParent = (element) => {
+  // 엘리먼트가 없거나 html/body까지 올라갔다면 null 반환
+  if (!element || element === document.documentElement || element === document.body) return null;
+
+  // 요소의 스타일 가져오기
+  const style = window.getComputedStyle(element);
+  const overflowY = style.getPropertyValue('overflow-y');
+  const hasVerticalScroll = /(auto|scroll)/.test(overflowY) && element.scrollHeight > element.clientHeight;
+
+  // 현재 요소가 스크롤 가능하다면 반환
+  if (hasVerticalScroll) return element;
+
+  // 아니라면 부모 요소에서 재귀적으로 검색
+  return findScrllParent(element.parentElement);
+};
+
+//const contentWidth = ref(0);
 const contentLeft = ref(0);
+const contentTop = ref(0);
 const contentStyle = computed(() => {
   const $obj = {};
-  if (contentWidth.value) $obj.width = contentWidth.value + 'px';
+  //if (contentWidth.value) $obj.width = contentWidth.value + 'px';
   if (contentLeft.value) $obj.left = contentLeft.value + 'px';
+  if (contentTop.value) $obj.top = contentTop.value + 'px';
   return $obj;
 });
 
@@ -92,15 +122,29 @@ watch(isShow, (newValue) => {
 });
 
 const onOpen = () => {
-  setStyle();
   isShow.value = true;
   setTimeout(() => {
     isOpen.value = true;
+    setStyle();
   });
+
+  window.addEventListener('resize', setStyle);
+  window.addEventListener('scroll', setStyle);
+  const sclEl = findScrllParent(wrapper.value);
+  if (sclEl) {
+    sclEl.addEventListener('scroll', setStyle);
+  }
 };
 
 const onClose = () => {
   isOpen.value = false;
+
+  window.removeEventListener('resize', setStyle);
+  window.removeEventListener('scroll', setStyle);
+  const sclEl = findScrllParent(wrapper.value);
+  if (sclEl) {
+    sclEl.removeEventListener('scroll', setStyle);
+  }
 };
 
 const bodyTransitionEnd = () => {
@@ -112,7 +156,7 @@ const slots = useSlots();
 onMounted(() => {
   const $wrap = wrapper.value;
   const $content = content.value;
-  if ($content) contentWidth.value = document.body.clientWidth;
+  // if ($content) contentWidth.value = document.body.clientWidth;
   if ($wrap) {
     if (slots.btn) {
       const $head = $wrap.querySelector('.tooltip-head');
@@ -130,12 +174,18 @@ onMounted(() => {
         }
       });
     }
-    if ($content) window.addEventListener('resize', setStyle);
   }
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
-  window.removeEventListener('resize', setStyle);
+  if (isOpen.value) {
+    window.removeEventListener('resize', setStyle);
+    window.removeEventListener('scroll', setStyle);
+    const sclEl = findScrllParent(wrapper.value);
+    if (sclEl) {
+      sclEl.removeEventListener('scroll', setStyle);
+    }
+  }
 });
 </script>

@@ -124,10 +124,3 @@ export default {
   methods: {}
 };
 </script>
-<style>
-.scroll-box {
-  height: 100px;
-  border: 1px solid #ccc;
-  overflow: hidden;
-}
-</style>
